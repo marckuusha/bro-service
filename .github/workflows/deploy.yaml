@@ -21,6 +21,7 @@ jobs:
 
     steps:
       - name: DEBUG
+        working-directory: /home/runner/work/bro-service
         run: |
           echo "Github workspace is ${{ github.workspace }}"
       - name: Checkout repository
