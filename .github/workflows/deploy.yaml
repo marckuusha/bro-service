@@ -25,7 +25,7 @@ jobs:
         working-directory: /home/runner/work/bro-service
         run: |
           echo "Github workspace is ${{ github.workspace }}"
-          ls ${{ github.workspace }}/deployment
+          ls ${{ github.workspace }}
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
