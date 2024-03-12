@@ -20,6 +20,9 @@ jobs:
 
 
     steps:
+      - name: DEBUG
+        run: |
+          echo "Github workspace is ${{ github.workspace }}"
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
