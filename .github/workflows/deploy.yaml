@@ -24,7 +24,8 @@ jobs:
       - name: DEBUG
         working-directory: /home/runner/work/bro-service
         run: |
-          echo "Github workspace is ${{ env.WORKSPACE }}"
+          echo "Github workspace is ${{ github.workspace }}"
+          cat ${{ github.workspace }}/deployment/bro-service.service
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -59,8 +60,8 @@ jobs:
       - name: List workspace contents
         run: |
           echo "Listing deployment folder contents:"
-          echo ${{ env.WORKSPACE }}
-          ls -la ${{ env.WORKSPACE }}/deployment
+          echo ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/deployment
       - name: Create environment file on server
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
@@ -70,7 +71,7 @@ jobs:
           echo 'HTTP_SERVER_PASSWORD=${{ secrets.AUTH_PASS }}' >> ${{ env.ENV_FILE_PATH }}"
       - name: Copy systemd service file
         run: |
-          scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.WORKSPACE }}/deployment/bro-service.service ${{ env.HOST }}:/tmp/bro-service.service
+          scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/bro-service.service ${{ env.HOST }}:/tmp/bro-service.service
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/bro-service.service /etc/systemd/system/bro-service.service"
       - name: Start application
         run: |
