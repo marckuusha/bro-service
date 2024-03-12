@@ -11,7 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HOST: root@5.189.237.115
+      HOST: root@46.161.52.147
       DEPLOY_DIRECTORY: /root/apps/bro-service
       CONFIG_PATH: /root/apps/bro-service/config/prod.yaml
       ENV_FILE_PATH: /root/apps/bro-service/config.env
