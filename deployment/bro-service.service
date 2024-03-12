@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory=/root/apps/bro-service
-ExecStart=/root/apps/bro-service/bro-service
+ExecStart=/root/apps/bro-service
 Restart=always
 RestartSec=4
 StandardOutput=inherit
