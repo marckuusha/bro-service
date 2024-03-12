@@ -66,7 +66,7 @@ func main() {
 	router.Get("/{alias}", redirect.New(log, storage))
 
 	router.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		render.JSON(w, r, "Таня, любимая залупка")
+		render.JSON(w, r, "Здорова корова")
 	})
 
 	log.Info("starting server", slog.String("address", cfg.Address))
