@@ -5,3 +5,7 @@ http_server:
   timeout: 4s
   idle_timeout: 30s
   user: "Shabby8574"
+client:
+  address: "46.161.52.147:44044"
+  timeout: 5s
+  retries_count: 10

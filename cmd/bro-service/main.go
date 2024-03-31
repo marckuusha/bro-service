@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,11 +11,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 	"golang.org/x/exp/slog"
 
+	"url-shortener/internal/client/grpcserv"
 	"url-shortener/internal/config"
 	"url-shortener/internal/http-server/handlers/redirect"
+	"url-shortener/internal/http-server/handlers/url/gen"
 	"url-shortener/internal/http-server/handlers/url/save"
 	mwLogger "url-shortener/internal/http-server/middleware/logger"
 	"url-shortener/internal/lib/logger/handlers/slogpretty"
@@ -29,6 +31,9 @@ const (
 )
 
 func main() {
+
+	fmt.Println("hello")
+
 	cfg := config.MustLoad()
 
 	log := setupLogger(cfg.Env)
@@ -44,6 +49,17 @@ func main() {
 	if err != nil {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
+	}
+
+	grpcClient, err := grpcserv.New(
+		context.Background(),
+		cfg.Client.Address,
+		cfg.Client.RetriesCount,
+		cfg.Client.Timeout,
+	)
+	if err != nil {
+		log.Error("cannot init grpc client: %s", err)
+		return
 	}
 
 	router := chi.NewRouter()
@@ -65,9 +81,7 @@ func main() {
 
 	router.Get("/{alias}", redirect.New(log, storage))
 
-	router.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		render.JSON(w, r, "Здорова корова")
-	})
+	router.Get("/test", gen.New(grpcClient))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
