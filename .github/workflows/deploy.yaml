@@ -1,6 +1,9 @@
 name: Deploy App
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       tag:
@@ -31,13 +34,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.tag }}
-      - name: Check if tag exists
-        run: |
-          git fetch --all --tags
-          if ! git tag | grep -q "^${{ github.event.inputs.tag }}$"; then
-            echo "error: Tag '${{ github.event.inputs.tag }}' not found"
-            exit 1
-          fi
       - name: Set up Go
         uses: actions/setup-go@v5.0.0
         with:
@@ -70,6 +66,11 @@ jobs:
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
           echo 'CONFIG_PATH=${{ env.CONFIG_PATH }}' > ${{ env.ENV_FILE_PATH }} && \
           echo 'HTTP_SERVER_PASSWORD=${{ secrets.AUTH_PASS }}' >> ${{ env.ENV_FILE_PATH }}"
+      - name: List workspace contents
+        run: |
+            echo "Listing deployment folder contents:"
+            echo ${{ github.workspace }}
+            ls -la ${{ github.workspace }}/deployment
       - name: Copy systemd service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/bro-service.service ${{ env.HOST }}:/tmp/bro-service.service
